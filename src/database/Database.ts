@@ -1,18 +1,12 @@
-import { User } from "../models/User";
-import { Tweet } from "../models/Tweet";
+import User from '../models/User';
+import Tweet from '../models/Tweet';
 
-export class Database {
-  public users: User[] = [];
-  public tweets: Tweet[] = [];
+const Database = {
+  users: [] as User[],
+  tweets: [] as Tweet[]
+};
 
-  addUser(user: User): void {
-    this.users.push(user);
-  }
+export default Database;
 
-  addTweet(tweet: Tweet): void {
-    this.tweets.push(tweet);
-  }
-}
 
-export const db = new Database();
 

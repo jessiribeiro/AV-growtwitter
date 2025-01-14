@@ -1,36 +1,32 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Tweet = void 0;
 class Tweet {
-    constructor(user, content, type = "normal") {
-        this.id = Tweet.idCounter++;
-        this.user = user;
+    constructor(id, content, type, author) {
+        this.likes = 0;
+        this.replies = [];
+        this.id = id;
         this.content = content;
         this.type = type;
-        this.likes = new Set();
-        this.replies = [];
+        this.author = author;
     }
-    like(user) {
-        this.likes.add(user);
+    like() {
+        this.likes += 1;
     }
-    reply(user, content) {
-        const reply = new Tweet(user, content, "reply");
-        this.replies.push(reply);
-        return reply;
+    reply(replyTweet) {
+        this.replies.push(replyTweet);
     }
     show() {
-        console.log(`@${this.user.username}: ${this.content}`);
-        if (this.likes.size > 0) {
-            const likeText = this.likes.size === 1
-                ? `@${[...this.likes][0].username} curtiu`
-                : `@${[...this.likes][0].username} e mais ${this.likes.size - 1} curtiram`;
-            console.log(`Likes: ${likeText}`);
-        }
+        console.log(`@${this.author.username}: ${this.content}`);
+        console.log(`Curtidas: ${this.likes}`);
         if (this.replies.length > 0) {
-            console.log("Replies:");
-            this.replies.forEach(reply => console.log(`> @${reply.user.username}: ${reply.content}`));
+            console.log('Respostas:');
+            this.replies.forEach(reply => {
+                console.log(`> @${reply.author.username}: ${reply.content}`);
+            });
+        }
+        else {
+            console.log('Sem respostas.');
         }
     }
 }
-exports.Tweet = Tweet;
-Tweet.idCounter = 1;
+exports.default = Tweet;

@@ -1,49 +1,54 @@
-import { Tweet } from "./Tweet";
+import Tweet from './Tweet';
 
-export class User {
-  private static idCounter = 1;
-  public readonly id: number;
-  public readonly username: string;
-  public readonly name: string;
-  public readonly email: string;
-  private password: string;
-  public following: Set<User>;
-  public tweets: Tweet[];
+class User {
+  id: string;
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  following: User[] = [];
+  tweets: Tweet[] = [];
+  likes: Tweet[] = [];
 
-  constructor(name: string, email: string, username: string, password: string) {
-    this.id = User.idCounter++;
+  constructor(id: string, name: string, username: string, email: string, password: string) {
+    this.id = id;
     this.name = name;
-    this.email = email;
     this.username = username;
+    this.email = email;
     this.password = password;
-    this.following = new Set();
-    this.tweets = [];
-  }
-
-  validatePassword(password: string): boolean {
-    return this.password === password;
   }
 
   follow(user: User): void {
-    if (user.id === this.id) throw new Error("Cannot follow yourself");
-    this.following.add(user);
-  }
-
-  sendTweet(content: string): Tweet {
-    const tweet = new Tweet(this, content, "normal");
-    this.tweets.push(tweet);
-    return tweet;
-  }
-
-  showFeed(): void {
-    console.log(`Feed for ${this.username}:`);
-    for (const user of this.following) {
-      user.tweets.forEach(tweet => tweet.show());
+    if (!this.following.includes(user)) {
+      this.following.push(user);
     }
   }
 
-  showTweets(): void {
-    console.log(`Tweets by ${this.username}:`);
-    this.tweets.forEach(tweet => tweet.show());
+  sendTweet(tweet: Tweet): void {
+    this.tweets.push(tweet);
+  }
+
+  likeTweet(tweet: Tweet): void {
+    if (!this.likes.includes(tweet)) {
+      this.likes.push(tweet);
+      tweet.like();
+    }
+  }
+
+  replyTweet(tweet: Tweet, content: string): Tweet {
+    const replyTweet = new Tweet(`reply-${this.id}-${tweet.replies.length + 1}`, content, 'Reply', this);
+    tweet.reply(replyTweet);
+    return replyTweet;
+  }
+
+  showFeed(): void {
+    console.log(`Feed do usuário ${this.name}:`);
+    this.following.forEach(userFollowed => {
+      userFollowed.tweets.forEach(tweet => {
+        tweet.show();
+      });
+    });
   }
 }
+
+export default User;
